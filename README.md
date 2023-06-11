@@ -33,6 +33,14 @@ planned add --task "Fix icons on iOS" --day monday
 
 This will add the task "Fix icons on iOS" for Monday.
 
+### Add a Task with information
+
+To add info to a task, use the info option:
+
+```shell
+planned add --task "Fix icons on iOS" --day monday --info "Icons are not showing up on iOS"
+```
+
 ### Check Daily Schedule
 
 To check your schedule for the day, simply run the planned command without any additional parameters:

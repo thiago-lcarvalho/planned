@@ -27,6 +27,14 @@ const usage = () => {
 			'planned --add "medical appointment" --day monday'
 		)}`
 	);
+	console.log(
+		`${chalk.yellow('Add info to a task')}`
+	)
+	console.log(
+		`${chalk.cyanBright('Example:')} ${chalk.magentaBright(
+			'planned --add "medical appointment" --day monday --info "Dr. Smith at 2pm"'
+		)}`
+	)
 	console.log(chalk.yellow('Check your schedule for the day'));
 	console.log(
 		`${chalk.cyanBright('Example:')} ${chalk.magentaBright('planned')}`
@@ -68,27 +76,26 @@ try {
 	const todaySetup = (params) => {
 		try {
 			if (params['--add']) {
-				const tasks =
-					JSON.parse(fs.readFileSync(tasksPath, 'utf8')) || {};
-				const { '--add': task, '--day': day, '--info': info } = params;
+				const tasks = JSON.parse(fs.readFileSync(tasksPath, 'utf8')) || {};
+				const { '--add': task, '--day': inputDay, '--info': info } = params; // Changed variable name to inputDay
 				if (
-					!day ||
-					!day.toLowerCase() ||
-					!day.toLowerCase().includes(day)
+					!inputDay || // Updated condition
+					!inputDay.toLowerCase() || // Updated condition
+					!day.includes(inputDay.toLowerCase()) // Updated condition
 				) {
 					console.log('Invalid day specified.');
 					return;
 				}
-				if (!tasks[day.toLowerCase()]) {
-					tasks[day.toLowerCase()] = [];
+				if (!tasks[inputDay.toLowerCase()]) {
+					tasks[inputDay.toLowerCase()] = [];
 				}
-				const taskInfo = info ? ` ${info}` : ''; // New line
-				tasks[day.toLowerCase()].push(`${task}${taskInfo}`); // Modified line
+				const taskInfo = info ? `: "${info}"` : ''; // Updated line
+				tasks[inputDay.toLowerCase()].push(`${task}${taskInfo}`);
 				fs.writeFileSync(tasksPath, JSON.stringify(tasks, null, 2));
 				if (info) {
-					console.log(`Task "${task}",${taskInfo} added for ${day}.`); // Modified line
+					console.log(`Task "${task}"${taskInfo} added for ${inputDay}.`); // Updated variable name
 				} else {
-					console.log(`Task "${task}" added for ${day}.`);
+					console.log(`Task "${task}" added for ${inputDay}.`); // Updated variable name
 				}
 			} else {
 				console.log('Invalid parameter. Please specify a task to add.');
@@ -107,9 +114,9 @@ try {
 			if (taskList && taskList.length > 0) {
 				console.log(`Tasks for ${params}:`);
 				taskList.forEach((task, index) => {
-					const [taskName, taskInfo] = task.split(' ');
-					const taskInfoMessage = taskInfo ? `, ${taskInfo}` : '';
-					console.log(`${index + 1}. ${taskName}${taskInfoMessage}`);
+					const [taskName, taskInfo] = task.split(':');
+					const taskInfoMessage = taskInfo ? `info: "${taskInfo.trim()}"` : '';
+					console.log(`${index + 1}: ${taskName.trim()}, ${taskInfoMessage}`);
 				});
 			} else {
 				console.log(
@@ -129,9 +136,9 @@ try {
 			if (taskList && taskList.length > 0) {
 				console.log(`Tasks for ${day[i]}:`);
 				taskList.forEach((task, index) => {
-					const [taskName, taskInfo] = task.split(' ');
-					const taskInfoMessage = taskInfo ? `, ${taskInfo}` : '';
-					console.log(`${index + 1}. ${taskName}${taskInfoMessage}`);
+					const [taskName, taskInfo] = task.split(':');
+					const taskInfoMessage = taskInfo ? `info: "${taskInfo.trim()}"` : '';
+					console.log(`${index + 1}: ${taskName.trim()}, ${taskInfoMessage}`);
 				});
 			} else {
 				console.log(`No tasks found for ${day[i]}.`);
@@ -142,7 +149,7 @@ try {
 	const args = arg({
 		'--list': Boolean,
 		'--day': String,
-		'--info': Boolean,
+		'--info': String,
 		'--add': String,
 		'--week': Boolean,
 		'--help': Boolean,
