@@ -115,7 +115,7 @@ try {
 				console.log(`Tasks for ${params}:`);
 				taskList.forEach((task, index) => {
 					const [taskName, taskInfo] = task.split(':');
-					const taskInfoMessage = taskInfo ? `info: "${taskInfo.trim()}"` : '';
+					const taskInfoMessage = taskInfo ? `info: ${taskInfo.trim()}` : '';
 					console.log(`${index + 1}: ${taskName.trim()}, ${taskInfoMessage}`);
 				});
 			} else {
@@ -137,7 +137,7 @@ try {
 				console.log(`Tasks for ${day[i]}:`);
 				taskList.forEach((task, index) => {
 					const [taskName, taskInfo] = task.split(':');
-					const taskInfoMessage = taskInfo ? `info: "${taskInfo.trim()}"` : '';
+					const taskInfoMessage = taskInfo ? `info: ${taskInfo.trim()}` : '';
 					console.log(`${index + 1}: ${taskName.trim()}, ${taskInfoMessage}`);
 				});
 			} else {
