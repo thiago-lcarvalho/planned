@@ -70,7 +70,7 @@ try {
 			if (params['--add']) {
 				const tasks =
 					JSON.parse(fs.readFileSync(tasksPath, 'utf8')) || {};
-				const { '--add': task, '--day': day } = params;
+				const { '--add': task, '--day': day, '--info': info } = params;
 				if (
 					!day ||
 					!day.toLowerCase() ||
@@ -82,9 +82,14 @@ try {
 				if (!tasks[day.toLowerCase()]) {
 					tasks[day.toLowerCase()] = [];
 				}
-				tasks[day.toLowerCase()].push(task);
+				const taskInfo = info ? ` ${info}` : ''; // New line
+				tasks[day.toLowerCase()].push(`${task}${taskInfo}`); // Modified line
 				fs.writeFileSync(tasksPath, JSON.stringify(tasks, null, 2));
-				console.log(`Task "${task}" added for ${day}.`);
+				if (info) {
+					console.log(`Task "${task}",${taskInfo} added for ${day}.`); // Modified line
+				} else {
+					console.log(`Task "${task}" added for ${day}.`);
+				}
 			} else {
 				console.log('Invalid parameter. Please specify a task to add.');
 				usage();
@@ -102,7 +107,9 @@ try {
 			if (taskList && taskList.length > 0) {
 				console.log(`Tasks for ${params}:`);
 				taskList.forEach((task, index) => {
-					console.log(`${index + 1}. ${task}`);
+					const [taskName, taskInfo] = task.split(' ');
+					const taskInfoMessage = taskInfo ? `, ${taskInfo}` : '';
+					console.log(`${index + 1}. ${taskName}${taskInfoMessage}`);
 				});
 			} else {
 				console.log(
@@ -114,7 +121,7 @@ try {
 			usage();
 		}
 	};
-
+	
 	const readTasksForWeek = () => {
 		const tasks = JSON.parse(fs.readFileSync(tasksPath, 'utf8')) || {};
 		for (let i = 0; i < day.length; i++) {
@@ -122,23 +129,26 @@ try {
 			if (taskList && taskList.length > 0) {
 				console.log(`Tasks for ${day[i]}:`);
 				taskList.forEach((task, index) => {
-					console.log(`${index + 1}. ${task}`);
+					const [taskName, taskInfo] = task.split(' ');
+					const taskInfoMessage = taskInfo ? `, ${taskInfo}` : '';
+					console.log(`${index + 1}. ${taskName}${taskInfoMessage}`);
 				});
 			} else {
 				console.log(`No tasks found for ${day[i]}.`);
 			}
 		}
 	};
-
+	
 	const args = arg({
 		'--list': Boolean,
 		'--day': String,
+		'--info': Boolean,
 		'--add': String,
 		'--week': Boolean,
 		'--help': Boolean,
 		'--clear': Boolean,
 	});
-
+	
 	if (args['--week']) {
 		readTasksForWeek();
 	} else if (args['--add']) {
